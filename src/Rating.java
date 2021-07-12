@@ -120,7 +120,7 @@ public class Rating {
             }
         }
 
-        return counter + turn * depth * 50;
+        return counter + turn * depth;
     }
 
     public static int rateAttack() {

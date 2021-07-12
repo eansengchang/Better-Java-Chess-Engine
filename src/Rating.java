@@ -1,7 +1,6 @@
 
 import java.util.Arrays;
 
-
 public class Rating {
 
     static int pawnBoard[][] = {//attribute to https://www.chessprogramming.org/Simplified_Evaluation_Function
@@ -23,7 +22,7 @@ public class Rating {
         {-20, -10, -10, -10, -10, -10, -10, -20},
         {0, 0, 0, 0, 0, 0, 0, 0}
     };
-    
+
     static int rookBoard[][] = {
         {0, 0, 0, 0, 0, 0, 0, 0},
         {5, 10, 10, 10, 10, 10, 10, 5},
@@ -98,28 +97,29 @@ public class Rating {
         {0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0}
     };
-    
+
     static boolean endGame = false;
     static boolean middleGame = false;
 
     public static int rating(int listLength, int depth, int turn) {
-        if(listLength == 0){
+        if (listLength == 0) {
             return rateMoveability(listLength, depth);
         }
-        
+
         int counter = 0;
 //        counter += rateAttack();
         counter += rateMaterial();
         counter += ratePositional();
-        
-        if (endGame){
-            if (counter > 0){
+
+        if (endGame) {
+            if (counter > 0) {
+                //only force the king to the corner if you are on the winning side
                 counter += forceKingCorner(Board.whiteKingPosition, Board.blackKingPosition);
             } else {
                 counter -= forceKingCorner(Board.blackKingPosition, Board.whiteKingPosition);
             }
         }
-        
+
         return counter + turn * depth * 50;
     }
 
@@ -134,7 +134,7 @@ public class Rating {
                 case "P":
                     counter += 100;
                     break;
-                case "R": 
+                case "R":
                     counter += 500;
                     break;
                 case "N":
@@ -170,20 +170,18 @@ public class Rating {
     public static int rateMoveability(int listLength, int depth) {
         int counter = 0;
 //        counter += listLength;
-//        Board.whiteToMove = !Board.whiteToMove;
         if (listLength == 0) {
             if (!Board.kingSafe(Board.whiteToMove ? Board.whiteKingPosition : Board.blackKingPosition)) {//if checkmate
-                
-                if(!Board.whiteToMove){
-                    counter += AlphaBetaChess.CHECKMATE * (depth + 1);// * depth;
+
+                if (!Board.whiteToMove) {
+                    counter += AlphaBetaChess.CHECKMATE * (depth + 1);
                 } else {
-                    counter -= AlphaBetaChess.CHECKMATE * (depth + 1);// * depth;
+                    counter -= AlphaBetaChess.CHECKMATE * (depth + 1);
                 }
             } else { // stalemate
                 counter = 0;
             }
         }
-//        Board.whiteToMove = !Board.whiteToMove;
         return counter;
     }
 
@@ -210,46 +208,45 @@ public class Rating {
                     counter += kingStartBoard[i / 8][i % 8];
                     break;
                 case "p":
-                    counter -= pawnBoard[7-(i / 8)][i % 8];
+                    counter -= pawnBoard[7 - (i / 8)][i % 8];
                     break;
                 case "r":
-                    counter -= rookBoard[7-(i / 8)][i % 8];
+                    counter -= rookBoard[7 - (i / 8)][i % 8];
                     break;
                 case "n":
-                    counter -= knightBoard[7-(i / 8)][i % 8];
+                    counter -= knightBoard[7 - (i / 8)][i % 8];
                     break;
                 case "b":
-                    counter -= bishopBoard[7-(i / 8)][i % 8];
+                    counter -= bishopBoard[7 - (i / 8)][i % 8];
                     break;
                 case "q":
-                    counter -= queenBoard[7-(i / 8)][i % 8];
+                    counter -= queenBoard[7 - (i / 8)][i % 8];
                     break;
                 case "k":
-                    counter -= kingStartBoard[7-(i / 8)][i % 8];
+                    counter -= kingStartBoard[7 - (i / 8)][i % 8];
                     break;
             }
         }
         return counter;
     }
-    
-    public static void endGame(){
-        System.out.println("Endgame");
+
+    public static void endGame() {
         kingStartBoard = kingEndBoard;
 //        AlphaBetaChess.globalDepth = 3;
         endGame = true;
         middleGame = false;
         AlphaBetaChess.globalDepth = 4;
     }
-    
-    public static void middleGame(){
+
+    public static void middleGame() {
         kingStartBoard = kingMidBoard;
         pawnBoard = pawnEndBoard;
         rookBoard = nothingBoard;
         AlphaBetaChess.globalDepth = 4;
         middleGame = true;
     }
-    
-    static int forceKingCorner(int friendlyKingPosition, int opponentKingSquare){
+
+    static int forceKingCorner(int friendlyKingPosition, int opponentKingSquare) {
         int evaluation = 0;
         int opponentKingRank = opponentKingSquare / 8;
         int opponentKingFile = opponentKingSquare % 8;
@@ -271,4 +268,3 @@ public class Rating {
         return evaluation * 15;
     }
 }
-

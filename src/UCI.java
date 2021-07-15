@@ -79,10 +79,10 @@ public class UCI {
                 String move;
                 if (r2 == 0 && r1 == 1 && "P".equals(Board.chessBoard[r1][c1])) {
                     //white pawn promotion
-                    move = "" + c1 + c2 + Board.chessBoard[r2][c2] + input.charAt(5) + Board.chessBoard[r1][c1] + "A";
+                    move = "" + c1 + c2 + Board.chessBoard[r2][c2] + Character.toUpperCase(input.charAt(4)) + Board.chessBoard[r1][c1] + "A";
                 } else if (r2 == 7 && r1 == 6 && "p".equals(Board.chessBoard[r1][c1])) {
                     //black pawn promotion
-                    move = "" + c1 + c2 + Board.chessBoard[r2][c2] + input.charAt(5) + Board.chessBoard[r1][c1] + "A";
+                    move = "" + c1 + c2 + Board.chessBoard[r2][c2] + input.charAt(4) + Board.chessBoard[r1][c1] + "A";
                 } else if (Math.abs(c1 - c2) == 2 && "k".equals(Board.chessBoard[r1][c1].toLowerCase())) {
                     move = "" + r1 + c1 + r2 + c2 + Board.chessBoard[r1][c1] + "C";
                 } else {

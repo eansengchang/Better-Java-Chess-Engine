@@ -25,7 +25,7 @@ public class Board {
         while (!"k".equals(chessBoard[blackKingPosition / 8][blackKingPosition % 8])) {
             blackKingPosition++;
         } // gets black king location
-//        importFEN("8/8/8/4k3/8/8/8/3RK3 w - - 0 1");
+//        importFEN("2rr2k1/2q2pp1/R1B1p2p/4P3/2pP2Pb/4BQ1P/1P3P2/5RK1 w Kkq - 0 1");
     }
 
     public static void importFEN(String FEN) {
@@ -53,7 +53,31 @@ public class Board {
             }
         }
         whiteToMove = "w".equals(split[1]);
-        castleRights = "-".equals(split[2]) ? "    " : split[2];
+        
+        //create the 4 digit castle rights
+        if(split[2].contains("K")){
+            castleRights = castleRights + "K";
+        } else {
+            castleRights = castleRights + " ";
+        }
+        if(split[2].contains("Q")){
+            castleRights = castleRights + "Q";
+        } else {
+            castleRights = castleRights + " ";
+        }
+        if(split[2].contains("k")){
+            castleRights = castleRights + "k";
+        } else {
+            castleRights = castleRights + " ";
+        }
+        if(split[2].contains("q")){
+            castleRights = castleRights + "q";
+        } else {
+            castleRights = castleRights + " ";
+        }
+        
+//        System.out.println(castleRights);
+        
         whiteKingPosition = 0;
         blackKingPosition = 0;
         while (!"K".equals(chessBoard[whiteKingPosition / 8][whiteKingPosition % 8])) {
@@ -64,7 +88,8 @@ public class Board {
         } // gets black king location
 
         //don't use book if its not start position
-        if (!"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1".equals(FEN)) {
+        if (!"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR".equals(split[0])) {
+//            System.out.println("does not equal");
             AlphaBetaChess.book = false;
         }
 //        for (int i = 0; i < 8; i++) {
@@ -456,7 +481,7 @@ public class Board {
             }
             //queen side castling
             if (currentCastleRights.charAt(1) == 'q') {
-                if (" ".equals(chessBoard[kingPosition / 8][kingPosition % 8 - 1]) && " ".equals(chessBoard[kingPosition / 8][kingPosition % 8 - 2])
+                if (" ".equals(chessBoard[kingPosition / 8][kingPosition % 8 - 1]) && " ".equals(chessBoard[kingPosition / 8][kingPosition % 8 - 2]) && " ".equals(chessBoard[kingPosition / 8][kingPosition % 8 - 3])
                         && kingSafe(kingPosition) && kingSafe(kingPosition - 1) && kingSafe(kingPosition - 2)) {
                     list = list + r + c + r + (c - 2) + pieceMoved + "C";
                 }

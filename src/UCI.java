@@ -7,25 +7,30 @@ public class UCI {
 
     public static void UCICommunication() {
         Scanner input = new Scanner(System.in);
-        while (true) {
+        try{
+            while (true) {
+                String inputString = input.nextLine();
 
-            String inputString = input.nextLine();
-            if ("uci".equals(inputString)) {
-                inputUCI();
-            } else if (inputString.startsWith("setoption")) {
-                inputSetOption(inputString);
-            } else if ("isready".equals(inputString)) {
-                inputIsReady();
-            } else if ("ucinewgame".equals(inputString)) {
-                inputUCINewGame();
-            } else if (inputString.startsWith("position")) {
-                inputPosition(inputString);
-            } else if ("go".equals(inputString)) {
-                inputGo();
-            } else if ("print".equals(inputString)) {
-                inputPrint();
+                if ("uci".equals(inputString)) {
+                    inputUCI();
+                } else if (inputString.startsWith("setoption")) {
+                    inputSetOption(inputString);
+                } else if ("isready".equals(inputString)) {
+                    inputIsReady();
+                } else if ("ucinewgame".equals(inputString)) {
+                    inputUCINewGame();
+                } else if (inputString.startsWith("position")) {
+                    inputPosition(inputString);
+                } else if (inputString.startsWith("go")) {
+                    inputGo();
+                } else if ("stop".equals(inputString)){
+                    inputStop();
+                } else if ("print".equals(inputString)) {
+                    inputPrint();
+                }
             }
-
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -47,6 +52,8 @@ public class UCI {
     private static void inputUCINewGame() {
         //clears move history
         Board.moveHistory = "";
+        Board.castleRights = "";
+        AlphaBetaChess.book = true;
     }
 
     private static void inputPosition(String input) {
@@ -72,17 +79,18 @@ public class UCI {
                 String move;
                 if (r2 == 0 && r1 == 1 && "P".equals(Board.chessBoard[r1][c1])) {
                     //white pawn promotion
-                    move = "" + c1 + c2 + Board.chessBoard[r2][c2] + input.charAt(4) + "A";
+                    move = "" + c1 + c2 + Board.chessBoard[r2][c2] + input.charAt(5) + Board.chessBoard[r1][c1] + "A";
                 } else if (r2 == 7 && r1 == 6 && "p".equals(Board.chessBoard[r1][c1])) {
                     //black pawn promotion
-                    move = "" + c1 + c2 + Board.chessBoard[r2][c2] + "qA";
+                    move = "" + c1 + c2 + Board.chessBoard[r2][c2] + input.charAt(5) + Board.chessBoard[r1][c1] + "A";
                 } else if (Math.abs(c1 - c2) == 2 && "k".equals(Board.chessBoard[r1][c1].toLowerCase())) {
-                    move = "" + r1 + c1 + r2 + c2 + "C";
+                    move = "" + r1 + c1 + r2 + c2 + Board.chessBoard[r1][c1] + "C";
                 } else {
                     //regular move
-                    move = "" + r1 + c1 + r2 + c2 + Board.chessBoard[r2][c2];
+                    move = "" + r1 + c1 + r2 + c2 + Board.chessBoard[r1][c1] + Board.chessBoard[r2][c2];
                 }
                 Board.makeMove(move);
+                Board.moveHistory = Board.moveHistory + move;
                 input = input.substring(input.indexOf(" ") + 1);
             }
         }
@@ -90,8 +98,14 @@ public class UCI {
 
     //6343
     private static void inputGo() {
-        String bestMove = AlphaBetaChess.computerMove();
+        if (AlphaBetaChess.book) {
+            AlphaBetaChess.useBook(Board.moveHistory);
+        } else {
+            AlphaBetaChess.computerMove();
+        }
+        String bestMove = AlphaBetaChess.bestMove;
 
+        //non promotion
         if (!bestMove.endsWith("A")) {
             char c1 = (char) ('a' + Character.getNumericValue(bestMove.charAt(1)));
             int r1 = 8 - Character.getNumericValue(bestMove.charAt(0));
@@ -99,7 +113,7 @@ public class UCI {
             int r2 = 8 - Character.getNumericValue(bestMove.charAt(2));
             bestMove = "" + c1 + r1 + c2 + r2;
         } else {
-
+            //promotion move
             char c1 = (char) ('a' + Character.getNumericValue(bestMove.charAt(0)));
             char c2 = (char) ('a' + Character.getNumericValue(bestMove.charAt(1)));
             int r1 = Board.whiteToMove ? 2 : 7;
@@ -114,5 +128,27 @@ public class UCI {
         for (int i = 0; i < 8; i++) {
             System.out.println(Arrays.toString(Board.chessBoard[i]));
         }
+    }
+
+    private static void inputStop() {
+        String bestMove = AlphaBetaChess.bestMove;
+
+        //non promotion
+        if (!bestMove.endsWith("A")) {
+            char c1 = (char) ('a' + Character.getNumericValue(bestMove.charAt(1)));
+            int r1 = 8 - Character.getNumericValue(bestMove.charAt(0));
+            char c2 = (char) ('a' + Character.getNumericValue(bestMove.charAt(3)));
+            int r2 = 8 - Character.getNumericValue(bestMove.charAt(2));
+            bestMove = "" + c1 + r1 + c2 + r2;
+        } else {
+            //promotion move
+            char c1 = (char) ('a' + Character.getNumericValue(bestMove.charAt(0)));
+            char c2 = (char) ('a' + Character.getNumericValue(bestMove.charAt(1)));
+            int r1 = Board.whiteToMove ? 2 : 7;
+            int r2 = Board.whiteToMove ? 1 : 8;
+
+            bestMove = "" + c1 + r1 + c2 + r2 + Character.toLowerCase(bestMove.charAt(3));
+        }
+        System.out.println("bestmove " + bestMove);
     }
 }

@@ -17,25 +17,25 @@ public class AlphaBetaChess {
     public static boolean book = true;
 
     public static void main(String[] args) {
-//        UCI.UCICommunication();
         Board.start();
-        JFrame f = new JFrame("Chess Program");
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        UserInterface ui = new UserInterface();
-        f.add(ui);
-        f.setSize(512, 540);
-        f.setVisible(true);
-        Object[] option = {"Computer", "Human"};
-        humanAsWhite = JOptionPane.showOptionDialog(null, "Who should play as white?", "Option", JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null, option, option[1]);
-        if (humanAsWhite == 0) {
-            if (book) {
-                useBook(Board.moveHistory);
-            } else {
-                computerMove();
-            }
-            f.repaint();
-        }
+        UCI.UCICommunication();
+//        JFrame f = new JFrame("Chess Program");
+//        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        UserInterface ui = new UserInterface();
+//        f.add(ui);
+//        f.setSize(512, 540);
+//        f.setVisible(true);
+//        Object[] option = {"Computer", "Human"};
+//        humanAsWhite = JOptionPane.showOptionDialog(null, "Who should play as white?", "Option", JOptionPane.YES_NO_OPTION,
+//                JOptionPane.QUESTION_MESSAGE, null, option, option[1]);
+//        if (humanAsWhite == 0) {
+//            if (book) {
+//                useBook(Board.moveHistory);
+//            } else {
+//                computerMove();
+//            }
+//            f.repaint();
+//        }
 
 //        for (int i = 0; i < 8; i++) {
 //            System.out.println(Arrays.toString(chessBoard[i]));
@@ -64,10 +64,7 @@ public class AlphaBetaChess {
         //add move to move history after computer makes move
         Board.moveHistory = Board.moveHistory + bestMove;
 
-        //resets bestmove
-        String tempBestMove = bestMove;
-        bestMove = null;
-        return tempBestMove;
+        return bestMove;
     }
 
     public static void useBook(String moveHistory) {
@@ -101,7 +98,8 @@ public class AlphaBetaChess {
             e.printStackTrace();
         };
 
-        if (possibilities.length() == 0 || moveHistory.length() / 6 > 15) {
+        if (possibilities.length() == 0 || moveHistory.length() / 6 > 20) {
+        
             book = false;
             computerMove();
             return;
@@ -176,7 +174,7 @@ public class AlphaBetaChess {
                 maxScore = score;
                 if (depth == globalDepth) {
                     bestMove = list.substring(i, i + 6);
-                    System.out.println(Board.toSAN(bestMove) + ": " + score * turnMultiplier);
+//                    System.out.println(Board.toSAN(bestMove) + ": " + score * turnMultiplier);
                 }
             }
             if (maxScore > alpha) {  // pruning happens

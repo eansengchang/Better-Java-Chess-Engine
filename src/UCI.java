@@ -3,7 +3,7 @@ import java.util.*;
 
 public class UCI {
 
-    static String ENGINENAME = "ESC BOT";
+    static String ENGINENAME = "Escapefish v1.4";
 
     public static void UCICommunication() {
         Scanner input = new Scanner(System.in);

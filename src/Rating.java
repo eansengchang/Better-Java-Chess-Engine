@@ -103,13 +103,12 @@ public class Rating {
 
     public static int rating(int listLength, int depth, int turn) {
         if (listLength == 0) {
-            return rateMoveability(listLength, depth);
+            return rateState(listLength, depth);
         }
 
         int counter = 0;
 //        counter += rateAttack();
-        counter += rateMaterial();
-        counter += ratePositional();
+        counter += ratePieces();
 
         if (endGame) {
             if (counter > 0) {
@@ -127,39 +126,45 @@ public class Rating {
         return 0;
     }
 
-    public static int rateMaterial() {
+    public static int ratePieces() {
         int counter = 0;
         for (int i = 0; i < 64; i++) {
             switch (Board.chessBoard[i / 8][i % 8]) {
                 case "P":
-                    counter += 100;
+                    counter += 100 + pawnBoard[i / 8][i % 8];
                     break;
                 case "R":
-                    counter += 500;
+                    counter += 500 + rookBoard[i / 8][i % 8];
                     break;
                 case "N":
-                    counter += 320;
+                    counter += 320 + knightBoard[i / 8][i % 8];
                     break;
                 case "B":
-                    counter += 330;
+                    counter += 330 + bishopBoard[i / 8][i % 8];
                     break;
                 case "Q":
-                    counter += 900;
+                    counter += 900 + queenBoard[i / 8][i % 8];
+                    break;
+                case "K":
+                    counter += kingStartBoard[i / 8][i % 8];
                     break;
                 case "p":
-                    counter -= 100;
+                    counter -= 100 + pawnBoard[7 - (i / 8)][i % 8];
                     break;
                 case "r":
-                    counter -= 500;
+                    counter -= 500 + rookBoard[7 - (i / 8)][i % 8];
                     break;
                 case "n":
-                    counter -= 300;
+                    counter -= 320 + knightBoard[7 - (i / 8)][i % 8];
                     break;
                 case "b":
-                    counter -= 300;
+                    counter -= 330 + bishopBoard[7 - (i / 8)][i % 8];
                     break;
                 case "q":
-                    counter -= 900;
+                    counter -= 900 + queenBoard[7 - (i / 8)][i % 8];
+                    break;
+                case "k":
+                    counter -= kingStartBoard[7 - (i / 8)][i % 8];
                     break;
             }
         }
@@ -167,7 +172,7 @@ public class Rating {
         return counter;
     }
 
-    public static int rateMoveability(int listLength, int depth) {
+    public static int rateState(int listLength, int depth) {
         int counter = 0;
 //        counter += listLength;
         if (listLength == 0) {
@@ -185,54 +190,8 @@ public class Rating {
         return counter;
     }
 
-    public static int ratePositional() {
-        int counter = 0;
-        for (int i = 0; i < 64; i++) {
-            switch (Board.chessBoard[i / 8][i % 8]) {
-                case "P":
-                    counter += pawnBoard[i / 8][i % 8];
-                    break;
-                case "R":
-                    counter += rookBoard[i / 8][i % 8];
-                    break;
-                case "N":
-                    counter += knightBoard[i / 8][i % 8];
-                    break;
-                case "B":
-                    counter += bishopBoard[i / 8][i % 8];
-                    break;
-                case "Q":
-                    counter += queenBoard[i / 8][i % 8];
-                    break;
-                case "K":
-                    counter += kingStartBoard[i / 8][i % 8];
-                    break;
-                case "p":
-                    counter -= pawnBoard[7 - (i / 8)][i % 8];
-                    break;
-                case "r":
-                    counter -= rookBoard[7 - (i / 8)][i % 8];
-                    break;
-                case "n":
-                    counter -= knightBoard[7 - (i / 8)][i % 8];
-                    break;
-                case "b":
-                    counter -= bishopBoard[7 - (i / 8)][i % 8];
-                    break;
-                case "q":
-                    counter -= queenBoard[7 - (i / 8)][i % 8];
-                    break;
-                case "k":
-                    counter -= kingStartBoard[7 - (i / 8)][i % 8];
-                    break;
-            }
-        }
-        return counter;
-    }
-
     public static void endGame() {
         kingStartBoard = kingEndBoard;
-//        AlphaBetaChess.globalDepth = 3;
         endGame = true;
         middleGame = false;
         AlphaBetaChess.globalDepth = 4;
